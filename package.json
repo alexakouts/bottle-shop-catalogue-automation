@@ -1,0 +1,29 @@
+{
+  "name": "bottle-shop-catalogue-automation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexakouts/bottle-shop-catalogue-automation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/alexakouts/bottle-shop-catalogue-automation/issues"
+  },
+  "homepage": "https://github.com/alexakouts/bottle-shop-catalogue-automation#readme",
+  "devDependencies": {
+    "prettier": "^3.9.6"
+  }
+}
