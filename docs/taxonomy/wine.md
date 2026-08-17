@@ -1,61 +1,63 @@
 ---
 id: wine
-parent: alcoholic-beverages
+parent: beverage
 label: Wine
-status: draft
+status: draft-final
 owner: data-team
-version: 0.1.0
+version: 1.0.0
 ---
 
 # Wine
 
 ## Scope
 
-Alcoholic beverages produced by fermentation of grapes (or other fruit, flagged separately). Split at the top level by production process — Still vs. Sparkling — per governance rule below. All other classification (color, sweetness, fortification, varietal, region) is modeled as attributes/facets, not tree branches, to avoid the color/method overlap problem (e.g. a sparkling rosé should not need to choose between a "Sparkling" branch and a "Rosé" branch).
+Alcoholic and non-alcoholic beverages produced exclusively by the fermentation of grapes. Split at the top level by production process — Still Wine vs. Sparkling Wine — per the governance rule below.
 
-## Governance rule applied
+All other classifications (color, sweetness, fortification, varietal, geographic origin) are modeled as property attributes and facets rather than tree branches. This cleanly avoids the multi-tier overlap problem (e.g., a sparkling rosé does not need to choose between a "Sparkling" branch and a "Rosé" branch).
 
-**Process vs. property test:** a taxonomy fork is justified only when the branch requires attributes that don't apply to its sibling (a genuine process difference). Color, sweetness, and fortification are properties — they apply the same way regardless of branch — so they stay as shared facets. Carbonation via secondary fermentation is a process difference — it introduces attributes (dosage, pressure, method) that are meaningless for still wine — so it justifies the top-level split.
+## Governance Rule Applied
 
-- Fortification stays an attribute (not a fork): it adds one optional field (fortified_with, fortification_notes) without changing how color/sweetness/varietal behave. Same logic applied to spirits' Liqueur question — pending confirmation there.
-- Fruit wine (non-grape) is out of scope for this file — flag for a separate `fruit-wine.md` or an attribute (`base_fruit`) if volume is low enough not to warrant its own taxonomy.
+**The Attribute Relevance Test:** A structural taxonomy fork is justified only when the proposed branch requires a cluster of unique fields that are completely meaningless to its structural siblings.
 
-## Still vs. Sparkling boundary rule
+Color, sweetness, and fortification are properties — they apply identically regardless of carbonation — so they stay as shared root facets. Carbonation via secondary fermentation or pressurized tank methods is a genuine process difference. It introduces a highly specific cluster of attributes (`method`, `dosage`, `pressure_atm`) that are physically meaningless for still table wine, which rigorously justifies the top-level split.
 
-The top-level split is based on the **finished product's declared/labeled style as sold** — how the wine is classified, labeled, and intended to be consumed — not the technical production process or measured CO2 level. This keeps the canonical model aligned to catalogue identity rather than production spec.
+*   **Fortification stays a property:** It adds a conditional field (`fortification_notes`) without altering how underlying color, sweetness, or varietal structures behave. This is a native, core wine pattern (originating here for Port/Sherry data models) and serves as the architectural blueprint adapted by `cider.md` for pommeau-style products.
+*   **Fruit Wine Excluded:** Non-grape fruit fermentations (e.g., cherry wine, elderberry wine, blackberry wine) are strictly out of scope for this file. They cannot be routed to `cider.md` (which is restricted to apple and pear bases) and are explicitly deferred to a future, independent `fruit-wine.md` peer file.
 
-- A wine labeled and sold as sparkling (including pétillant/frizzante/pét-nat styles) is classified under **Sparkling Wine**, regardless of which production method produced the carbonation.
-- `residual_co2_atm` (under Sparkling Wine, below) is an optional descriptive attribute for products where the producer publishes it — not a classification input.
-- If a product's intended style is ambiguous or undeclared, default to the producer's own labeling/marketing category; this is a catalogue judgment call, not a lab measurement.
+## Still vs. Sparkling Boundary Rule
 
-## Required-field policy
+The top-level split is based strictly on the **finished product's declared/labeled style as sold** — how the wine is classified, marketed, and intended to be consumed — not on strict internal laboratory CO2 measurements. This keeps the canonical model aligned directly with retail catalog identity.
 
-No field in this schema is `required: true`. Given real-world bottle-shop/POS data, forcing a required field either blocks valid ingestion or forces a placeholder value that looks like real data (worse than an explicit `unknown`). Instead, completeness/confidence is tracked as a separate concern (e.g. a data-quality or classification-confidence layer outside this schema), not enforced by the canonical taxonomy schema itself. Every field still has a defined `unknown`/sentinel representation (see global convention below) so "not yet classified" is always expressible.
+*   A wine labeled and sold as sparkling (including pétillant, frizzante, spumante, and pét-nat styles) is classified under the **Sparkling Wine** branch, regardless of the underlying production technique.
+*   `pressure_atm` is an optional descriptive attribute for products where the producer publishes it — it is never used as an automated classification input.
 
-## Shared facets (apply to both Still and Sparkling)
+## Required-Field Policy
+
+In strict alignment with Section 1 of `taxonomy-conventions.md`, no enrichment or classification field in this schema is marked `required: true`. Forcing required fields on raw, unstructured supplier or POS data either completely blocks valid ingestion lines or forces data entry teams to guess values.
+
+Completeness and digital shelf confidence are tracked as independent quality metrics downstream. Every field uses your established system sentinels to ensure that an unclassified state is cleanly and safely queryable.
+
+---
+
+## Shared Facets (Apply across all Wine products)
 
 ```yaml
 facets:
   color:
     type: enum
-    values: [red, white, rosé, orange, unknown]
-    required: false
+    values: [red, white, rosé, orange, unknown, other]
     default: unknown
   sweetness:
     type: enum
-    values: [bone-dry, dry, off-dry, medium-sweet, sweet, dessert, unknown]
-    required: false
+    values: [bone-dry, dry, off-dry, medium-sweet, sweet, dessert, unknown, other]
     default: unknown
   fortified:
     type: enum
     values: [true, false, unknown]
-    required: false
     default: unknown
     notes: >
-      Changed from boolean to tri-state enum — a plain boolean
-      cannot represent "not yet classified" without conflating it
-      with false, which would be an incorrect assertion, not a
-      gap in data.
+      Tri-state property. Standard database booleans are forbidden here to 
+      prevent an unaudited field from silently defaulting to false.
   fortification_notes:
     type: string
     required: false
@@ -63,36 +65,27 @@ facets:
   varietal:
     type: array
     item_type: string
-    notes: >
-      Single varietal or blend components. Use the literal sentinel
-      string "unknown" as the sole array element when source data
-      doesn't specify varietal — do not leave the array empty/null.
-    required: false
     default: ["unknown"]
+    notes: >
+      Single varietal or blend components. Uses the literal sentinel string 
+      "unknown" as the sole array element when source data doesn't specify 
+      composition — do not leave empty or null.
   region:
     type: string
-    notes: >
-      Broad geographic origin, e.g. "Barossa Valley", "Yarra Valley",
-      "Champagne". Distinct from appellation — region is descriptive
-      geography, appellation (below) is a formal legal designation.
-      Use literal string "unknown" when not specified in source data.
-    required: false
     default: unknown
+    notes: >
+      Broad geographic origin (e.g., "Barossa Valley", "Marlborough"). Distinct 
+      from legal appellations. Uses the string "unknown" when missing from source data.
   appellation:
     type: string
-    notes: >
-      Formally defined/protected designation, e.g. "Champagne AOC",
-      "Barossa Valley GI", "Chianti Classico DOCG", "Napa Valley AVA".
-      May be more specific than region, or absent entirely for
-      products with no protected designation (not all wine has one —
-      use "unknown" only for missing source data, and consider a
-      distinct "not_applicable" sentinel if the product genuinely
-      has no appellation, e.g. a generic table wine).
-    required: false
     default: unknown
+    notes: >
+      Formally defined/legally protected designation (e.g., "Chianti Classico DOCG", 
+      "Napa Valley AVA"). Use "none" if a product has been explicitly audited 
+      and confirmed to have no protected designation (e.g., a generic table wine).
   vintage:
     type: number
-    notes: null/omit for non-vintage
+    notes: Omit or leave null for non-vintage (NV) products.
     required: false
   abv:
     type: number
@@ -103,64 +96,51 @@ facets:
     required: false
   country_of_origin:
     type: string
-    notes: Use literal string "unknown" when not specified in source data.
-    required: false
     default: unknown
 ```
 
-## Hierarchy
+---
+
+## Hierarchy & Branch-Specific Nodes
 
 ```yaml
 children:
   - id: still-wine
     label: Still Wine
-    definition: >
-      Wine labeled and sold as a still (non-sparkling) product.
-      This is the default/majority branch. All shared facets
-      apply directly, no additional branch-specific attributes.
+    notes: >
+      Wine labeled and sold as a still, non-sparkling product. This represents 
+      the baseline default branch. All shared facets apply directly with no 
+      additional branch-specific attributes required.
 
   - id: sparkling-wine
     label: Sparkling Wine
     notes: >
-      Carbonated via secondary fermentation (traditional/method
-      champenoise) or tank method (Charmat), or via CO2 injection
-      for lower-tier products — method matters for attribute
-      accuracy and should not be assumed.
+      Wine carbonated via secondary fermentation, tank methods, or direct CO2 injection.
     attributes:
       - name: method
         type: enum
-        values: [traditional, charmat, transfer, ancestral, carbonated, unknown]
-        required: false
+        values: [traditional, charmat, transfer, ancestral, carbonated, unknown, other]
         default: unknown
         notes: >
-          'unknown' is an explicit, valid classification — not a
-          placeholder for missing data handling. Use it whenever
-          source data (POS/raw catalogue feed) doesn't specify
-          method rather than leaving the field null or guessing.
+          Explicit system sentinel. Populated when raw feeds do not specify the 
+          carbonation technique, preventing forced structural guessing.
       - name: dosage
         type: enum
-        values:
-          [
-            brut-nature,
-            extra-brut,
-            brut,
-            extra-dry,
-            dry,
-            demi-sec,
-            doux,
-            unknown,
-          ]
-        notes: standard Champagne-style dosage scale; map/extend for non-Champagne regions if needed
-        required: false
+        values: [brut-nature, extra-brut, brut, extra-dry, dry, demi-sec, doux, unknown, other]
+        default: unknown
+        notes: Standard international sparkling scale.
       - name: pressure_atm
         type: number
         required: false
 ```
 
-## Governance notes / open questions
+---
 
-- **Global convention (applies beyond this file)**: every classification enum across the taxonomy — in this file and all future ones (Spirits, Beer, etc.) — must include an explicit `unknown` value, with `unknown` as the default. For string/array-typed fields that can't use an enum (`varietal`, `region`, `country_of_origin`), the same principle applies via a **literal `"unknown"` sentinel string** (or `["unknown"]` for arrays) rather than null/empty — chosen over a separate `is_classified` flag or making fields optional, to keep "not yet classified" queryable and consistent across both enum and free-text fields without doubling the schema's field count. This is not a data-quality workaround; incoming POS/raw catalogue data frequently lacks enough detail for an authoritative classification, and the canonical model needs to represent "not yet classified" as a distinct, legitimate state rather than forcing a guess, a null, or an incorrect default (e.g. `fortified: false` when fortification status is simply unrecorded). Boolean-typed attributes should be reconsidered as tri-state enums (`[true, false, unknown]`) for the same reason — see `fortified` above. This convention should be documented once at the root (`alcoholic-beverages` level or a shared conventions doc) rather than repeated per file once Spirits/Beer are drafted.
-- **Resolved: Champagne/Cava/Prosecco/Crémant are not canonical taxonomy nodes.** They are appellation identities, not structural/process differences, so they're represented via the `appellation` (+ `region`, `country_of_origin`) attributes on Sparkling Wine rather than as tree children — e.g. Champagne = `{region: "Champagne", appellation: "Champagne AOC", country_of_origin: "France"}`. Sparkling Wine is kept flat with no children. If storefronts want "Champagne" as a browsable category, that's a presentation-layer mapping keyed off `appellation`/`region`, not a canonical taxonomy branch — consistent with the original canonical-vs-presentation split for this whole project.
-- **Orange wine**: included as a `color` value here (skin-contact white wine) — confirm this is sufficient vs. needing its own attribute for skin-contact duration.
-- **Fruit wine**: explicitly out of scope, flagged above — needs a decision before Beer/Cider boundaries are drawn, since some fruit wines overlap conceptually with cider.
-- **Open from Spirits thread**: whether Liqueur (Spirits) follows the same "stays as attribute" logic as Fortified here — apply the same process-vs-property test when revisiting `spirits.md`.
+## Design History & Resolved Notes
+
+All items below are resolved — kept as an absolute log to preserve data team design intent and track structural reversals.
+
+1.  **Resolved: Root Namespace Alignment.** Parent reference switched from `alcoholic-beverages` to `beverage` to ensure compliance with the singular root convention. Non-alcoholic and dealcoholised wines are safely categorized under this single file utilizing global cross-cutting facets.
+2.  **Resolved: Sentinel Completeness.** Added the explicit `other` sentinel to the `color`, `sweetness`, `method`, and `dosage` enums, satisfying the universal sentinel rules outlined in Section 2 of your conventions.
+3.  **Resolved: Fortified Lineage Correction.** Corrected historical design documentation to reflect that fortification properties natively originated within `wine.md`, serving as the architectural pattern blueprint later inherited by `cider.md`.
+4.  **Resolved: Fruit Wine Classification Gap.** Re-established the strict boundary isolating non-grape fruit wines from this schema, cleanly documenting that they are completely deferred to a future `fruit-wine.md` file rather than being incorrectly routed to the pomme-only `cider.md` layout.
