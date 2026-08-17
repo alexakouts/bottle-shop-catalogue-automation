@@ -19,8 +19,8 @@ Fermented, grain-based alcoholic and non-alcoholic beverages. Primarily derived 
 
 **The Attribute Relevance Test:** A structural taxonomy fork is justified only when a proposed branch requires a cluster of unique fields that are completely meaningless to its structural siblings.
 
-*   **Ale vs. Lager is NOT a fork:** Fermentation type (top-fermenting/warm vs. bottom-fermenting/cold) does not alter which data metrics apply. Fields tracking IBU, hop bills, malt bills, and SRM color apply identically to both. It is modeled as a shared property facet (`fermentation_type`) rather than a structural tree branch, aligning cleanly with commercial POS retail data.
-*   **Sour/Wild is NOT a fork:** Originally branched, this distinction was collapsed into a flat property set. Splitting the tree would create severe data degradation for modern craft hybrid styles (such as a "Sour Hazy IPA"), forcing data entry teams to choose between an IPA style node or a Sour branch. Instead, the schema is flat, and sour-specific fields are conditionally activated at runtime via application logic (`depends_on: sour_or_wild=true`), letting a hybrid cleanly carry both hop bills and souring methods simultaneously on a single record.
+- **Ale vs. Lager is NOT a fork:** Fermentation type (top-fermenting/warm vs. bottom-fermenting/cold) does not alter which data metrics apply. Fields tracking IBU, hop bills, malt bills, and SRM color apply identically to both. It is modeled as a shared property facet (`fermentation_type`) rather than a structural tree branch, aligning cleanly with commercial POS retail data.
+- **Sour/Wild is NOT a fork:** Originally branched, this distinction was collapsed into a flat property set. Splitting the tree would create severe data degradation for modern craft hybrid styles (such as a "Sour Hazy IPA"), forcing data entry teams to choose between an IPA style node or a Sour branch. Instead, the schema is flat, and sour-specific fields are conditionally activated at runtime via application logic (`depends_on: sour_or_wild=true`), letting a hybrid cleanly carry both hop bills and souring methods simultaneously on a single record.
 
 ## Required-Field Policy
 
@@ -43,10 +43,24 @@ facets:
     type: enum
     values:
       [
-        ipa-american, ipa-hazy, pale-ale, amber-ale, brown-ale,
-        porter, stout, pilsner, helles-lager, marzen, amber-lager,
-        dark-lager, wheat-beer, saison-farmhouse, belgian-ale,
-        strong-ale, unknown, other,
+        ipa-american,
+        ipa-hazy,
+        pale-ale,
+        amber-ale,
+        brown-ale,
+        porter,
+        stout,
+        pilsner,
+        helles-lager,
+        marzen,
+        amber-lager,
+        dark-lager,
+        wheat-beer,
+        saison-farmhouse,
+        belgian-ale,
+        strong-ale,
+        unknown,
+        other,
       ]
     default: unknown
     notes: >
@@ -100,9 +114,17 @@ facets:
     type: enum
     values:
       [
-        lambic, gueuze, fruit-lambic, gose, berliner-weisse,
-        flanders-red, flanders-brown, modern-sour-hybrid, wild-ale,
-        unknown, other,
+        lambic,
+        gueuze,
+        fruit-lambic,
+        gose,
+        berliner-weisse,
+        flanders-red,
+        flanders-brown,
+        modern-sour-hybrid,
+        wild-ale,
+        unknown,
+        other,
       ]
     required: false
     depends_on: sour_or_wild=true

@@ -5,15 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9d609ca0-046e-4acc-a95f-d173575cbdc1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/docs/taxonomy/beer.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/taxonomy/beveridge.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/taxonomy/cider.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/taxonomy/mead.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/taxonomy/rtd.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/taxonomy/liquor.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/taxonomy-conventions.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/taxonomy/sparkling-wine.md" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/domain/factories/beer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/domain/factories/beverage.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/domain/schemas/base.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/domain/schemas/beer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/domain/schemas/beverage.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ingestion/ingest-beverage.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/domain/factories/beer.factory.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/ingestion/ingest-beverage.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.devcontainer/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.devcontainer/devcontainer.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/taxonomy/beer.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/beer.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/taxonomy/beveridge.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/beveridge.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/taxonomy/cider.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/cider.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/taxonomy/rtd.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/rtd.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/taxonomy/spirits.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/spirits.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/taxonomy/taxonomy-conventions.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/taxonomy-conventions.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/taxonomy/wine.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/taxonomy/wine.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/domain/catalogue/identity.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/domain/factories/identity.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/assert.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/assert.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/domain/catalogue/identity.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/test/domain/catalogue/identity.test.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,7 +62,7 @@
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;disable.download.node.interpreter.editor.notification&quot;: &quot;true&quot;,
     &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/workspaces/bottle-shop-catalogue-automation/docs/taxonomy&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/workspaces/bottle-shop-catalogue-automation/src/domain/schemas&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -60,7 +73,13 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/domain/schemas" />
       <recent name="$PROJECT_DIR$/docs/taxonomy" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/ingestion" />
+      <recent name="$PROJECT_DIR$/src/domain/factories" />
+      <recent name="$PROJECT_DIR$/src/domain" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -80,7 +99,7 @@
       <workItem from="1786604865586" duration="7833000" />
       <workItem from="1786922593288" duration="6015000" />
       <workItem from="1786950324237" duration="2179000" />
-      <workItem from="1786957083533" duration="1939000" />
+      <workItem from="1786957083533" duration="8922000" />
     </task>
     <servers />
   </component>

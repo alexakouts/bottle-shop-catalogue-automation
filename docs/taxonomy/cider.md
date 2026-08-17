@@ -19,8 +19,8 @@ Sibling to `wine.md`, `spirits.md`, `beer.md`, and `rtd.md` under the global `be
 
 **The Attribute Relevance Test:** A structural taxonomy fork is justified only when a proposed branch requires a cluster of unique fields that are completely meaningless to its structural siblings.
 
-*   **Still vs. Sparkling is NOT a fork:** Originally branched, this carbonation split was collapsed into a conditional property set. Cider's carbonation attribute footprint is simple (`method` and `pressure_atm`), meaning the case for a hard type-level fork is weak. Furthermore, collapsing the fork leaves the `method` facet universally accessible, allowing the ingestion pipeline to cleanly record heritage production techniques like **keeving** on still ciders without schema validation errors.
-*   **Perry is NOT a fork:** Pear-based cider utilizes the identical production process as apple cider and requires no unique fields. It is captured cleanly via the `base_fruit` facet rather than fracturing the tree.
+- **Still vs. Sparkling is NOT a fork:** Originally branched, this carbonation split was collapsed into a conditional property set. Cider's carbonation attribute footprint is simple (`method` and `pressure_atm`), meaning the case for a hard type-level fork is weak. Furthermore, collapsing the fork leaves the `method` facet universally accessible, allowing the ingestion pipeline to cleanly record heritage production techniques like **keeving** on still ciders without schema validation errors.
+- **Perry is NOT a fork:** Pear-based cider utilizes the identical production process as apple cider and requires no unique fields. It is captured cleanly via the `base_fruit` facet rather than fracturing the tree.
 
 ## Required-Field Policy
 
@@ -71,7 +71,16 @@ facets:
     default: []
   fruit_addition_method:
     type: enum
-    values: [co-fermented-juice, post-fermentation-juice, puree, natural-extract, none, unknown, other]
+    values:
+      [
+        co-fermented-juice,
+        post-fermentation-juice,
+        puree,
+        natural-extract,
+        none,
+        unknown,
+        other,
+      ]
     default: none
   botanicals:
     type: array

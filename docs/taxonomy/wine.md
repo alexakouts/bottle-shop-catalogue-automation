@@ -21,15 +21,15 @@ All other classifications (color, sweetness, fortification, varietal, geographic
 
 Color, sweetness, and fortification are properties — they apply identically regardless of carbonation — so they stay as shared root facets. Carbonation via secondary fermentation or pressurized tank methods is a genuine process difference. It introduces a highly specific cluster of attributes (`method`, `dosage`, `pressure_atm`) that are physically meaningless for still table wine, which rigorously justifies the top-level split.
 
-*   **Fortification stays a property:** It adds a conditional field (`fortification_notes`) without altering how underlying color, sweetness, or varietal structures behave. This is a native, core wine pattern (originating here for Port/Sherry data models) and serves as the architectural blueprint adapted by `cider.md` for pommeau-style products.
-*   **Fruit Wine Excluded:** Non-grape fruit fermentations (e.g., cherry wine, elderberry wine, blackberry wine) are strictly out of scope for this file. They cannot be routed to `cider.md` (which is restricted to apple and pear bases) and are explicitly deferred to a future, independent `fruit-wine.md` peer file.
+- **Fortification stays a property:** It adds a conditional field (`fortification_notes`) without altering how underlying color, sweetness, or varietal structures behave. This is a native, core wine pattern (originating here for Port/Sherry data models) and serves as the architectural blueprint adapted by `cider.md` for pommeau-style products.
+- **Fruit Wine Excluded:** Non-grape fruit fermentations (e.g., cherry wine, elderberry wine, blackberry wine) are strictly out of scope for this file. They cannot be routed to `cider.md` (which is restricted to apple and pear bases) and are explicitly deferred to a future, independent `fruit-wine.md` peer file.
 
 ## Still vs. Sparkling Boundary Rule
 
 The top-level split is based strictly on the **finished product's declared/labeled style as sold** — how the wine is classified, marketed, and intended to be consumed — not on strict internal laboratory CO2 measurements. This keeps the canonical model aligned directly with retail catalog identity.
 
-*   A wine labeled and sold as sparkling (including pétillant, frizzante, spumante, and pét-nat styles) is classified under the **Sparkling Wine** branch, regardless of the underlying production technique.
-*   `pressure_atm` is an optional descriptive attribute for products where the producer publishes it — it is never used as an automated classification input.
+- A wine labeled and sold as sparkling (including pétillant, frizzante, spumante, and pét-nat styles) is classified under the **Sparkling Wine** branch, regardless of the underlying production technique.
+- `pressure_atm` is an optional descriptive attribute for products where the producer publishes it — it is never used as an automated classification input.
 
 ## Required-Field Policy
 
@@ -49,7 +49,8 @@ facets:
     default: unknown
   sweetness:
     type: enum
-    values: [bone-dry, dry, off-dry, medium-sweet, sweet, dessert, unknown, other]
+    values:
+      [bone-dry, dry, off-dry, medium-sweet, sweet, dessert, unknown, other]
     default: unknown
   fortified:
     type: enum
@@ -119,14 +120,34 @@ children:
     attributes:
       - name: method
         type: enum
-        values: [traditional, charmat, transfer, ancestral, carbonated, unknown, other]
+        values:
+          [
+            traditional,
+            charmat,
+            transfer,
+            ancestral,
+            carbonated,
+            unknown,
+            other,
+          ]
         default: unknown
         notes: >
           Explicit system sentinel. Populated when raw feeds do not specify the 
           carbonation technique, preventing forced structural guessing.
       - name: dosage
         type: enum
-        values: [brut-nature, extra-brut, brut, extra-dry, dry, demi-sec, doux, unknown, other]
+        values:
+          [
+            brut-nature,
+            extra-brut,
+            brut,
+            extra-dry,
+            dry,
+            demi-sec,
+            doux,
+            unknown,
+            other,
+          ]
         default: unknown
         notes: Standard international sparkling scale.
       - name: pressure_atm

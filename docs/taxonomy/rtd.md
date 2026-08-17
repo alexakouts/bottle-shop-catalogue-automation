@@ -33,14 +33,35 @@ Like Beer and Cider, the RTD file operates as a single flat schema with no struc
 facets:
   rtd_category:
     type: enum
-    values: [classic-cocktail, contemporary-mix, hard-seltzer, hard-tea-coffee, alcopop-soda, wine-spritzer, unknown, other]
+    values:
+      [
+        classic-cocktail,
+        contemporary-mix,
+        hard-seltzer,
+        hard-tea-coffee,
+        alcopop-soda,
+        wine-spritzer,
+        unknown,
+        other,
+      ]
     required: true
     notes: >
       Drives front-end filtering. A canned Gin & Tonic is a contemporary-mix; 
       a canned Margarita or Espresso Martini is a classic-cocktail.
   base_liquid_type:
     type: enum
-    values: [spirit, liqueur, wine, beer, malt-fermented, sugar-fermented, neutral-alcohol, unknown, other]
+    values:
+      [
+        spirit,
+        liqueur,
+        wine,
+        beer,
+        malt-fermented,
+        sugar-fermented,
+        neutral-alcohol,
+        unknown,
+        other,
+      ]
     required: true
     notes: >
       Identifies the PRIMARY/dominant alcoholic base — for front-end
@@ -52,7 +73,8 @@ facets:
       independently populated, not strictly gated to matching this value.
   specific_base_spirit:
     type: enum
-    values: [whisky, vodka, gin, rum, tequila, mezcal, brandy, none, unknown, other]
+    values:
+      [whisky, vodka, gin, rum, tequila, mezcal, brandy, none, unknown, other]
     notes: >
       NOT strictly gated to base_liquid_type=spirit — deliberately
       ungated (same reasoning as cider.md's `method` field) so a
@@ -63,7 +85,18 @@ facets:
       from source data.
   specific_base_liqueur:
     type: enum
-    values: [aperitif-bitter, coffee, amaretto-nut, triple-sec-orange, cream, herbal, none, unknown, other]
+    values:
+      [
+        aperitif-bitter,
+        coffee,
+        amaretto-nut,
+        triple-sec-orange,
+        cream,
+        herbal,
+        none,
+        unknown,
+        other,
+      ]
     notes: >
       Parallel to specific_base_spirit, same ungating rationale — e.g. a
       Margarita (base_liquid_type=spirit, specific_base_spirit=tequila)
@@ -75,11 +108,36 @@ facets:
   mixer_type:
     type: array
     item_type: enum
-    values: [tonic, cola, ginger-ale-beer, soda-water, citrus-juice, fruit-juice-other, coffee, cream, none, unknown, other]
+    values:
+      [
+        tonic,
+        cola,
+        ginger-ale-beer,
+        soda-water,
+        citrus-juice,
+        fruit-juice-other,
+        coffee,
+        cream,
+        none,
+        unknown,
+        other,
+      ]
     default: ["none"]
   primary_flavor_profile:
     type: enum
-    values: [citrus, berry, tropical, herbal-spice, sweet-cola, dry-bitter, coffee-chocolate, clean-neutral, unknown, other]
+    values:
+      [
+        citrus,
+        berry,
+        tropical,
+        herbal-spice,
+        sweet-cola,
+        dry-bitter,
+        coffee-chocolate,
+        clean-neutral,
+        unknown,
+        other,
+      ]
     default: unknown
   carbonation_style:
     type: enum

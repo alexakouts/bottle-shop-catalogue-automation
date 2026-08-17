@@ -36,7 +36,20 @@ Spirits
 facets:
   spirit_type:
     type: enum
-    values: [whisky, cognac_armagnac, brandy, rum, tequila, mezcal, vodka, gin, neutral, unknown, other]
+    values:
+      [
+        whisky,
+        cognac_armagnac,
+        brandy,
+        rum,
+        tequila,
+        mezcal,
+        vodka,
+        gin,
+        neutral,
+        unknown,
+        other,
+      ]
     required: true
     notes: >
       The macro classification. Kept at the granularity of explicit market 
@@ -88,14 +101,33 @@ facets:
 
 ## Branch 1: Matured / Wood-Aged Spirits
 
-*Structural scope: Any spirit whose primary character and data footprint is defined by cask interaction.*
+_Structural scope: Any spirit whose primary character and data footprint is defined by cask interaction._
 
 ```yaml
 matured_spirits:
   attributes:
     - name: style
       type: enum
-      values: [bourbon, rye, scotch, irish, japanese, canadian, cognac-appellation, armagnac-appellation, pisco, calvados, grappa, aged-rum, reposado, anejo, extra-anejo, unknown, other]
+      values:
+        [
+          bourbon,
+          rye,
+          scotch,
+          irish,
+          japanese,
+          canadian,
+          cognac-appellation,
+          armagnac-appellation,
+          pisco,
+          calvados,
+          grappa,
+          aged-rum,
+          reposado,
+          anejo,
+          extra-anejo,
+          unknown,
+          other,
+        ]
       default: unknown
       notes: >
         Contextually driven by the root `spirit_type` — e.g., only whisky 
@@ -119,7 +151,18 @@ matured_spirits:
     - name: cask_type
       type: array
       item_type: enum
-      values: [virgin-oak, ex-bourbon, sherry, port, wine, rum-cask, unaged, unknown, other]
+      values:
+        [
+          virgin-oak,
+          ex-bourbon,
+          sherry,
+          port,
+          wine,
+          rum-cask,
+          unaged,
+          unknown,
+          other,
+        ]
       default: ["unknown"]
     - name: wood_species
       type: enum
@@ -136,14 +179,30 @@ matured_spirits:
 
 ## Branch 2: Rectified / Unaged Spirits
 
-*Structural scope: Spirits defined by distillation purity, botanical infusion, or unaged raw material profile.*
+_Structural scope: Spirits defined by distillation purity, botanical infusion, or unaged raw material profile._
 
 ```yaml
 rectified_spirits:
   attributes:
     - name: style
       type: enum
-      values: [london-dry, old-tom, contemporary, navy-strength, white-rum, spiced-rum, rhum-agricole, blanco, joven, cristalino, generic-vodka, flavored-vodka, unknown, other]
+      values:
+        [
+          london-dry,
+          old-tom,
+          contemporary,
+          navy-strength,
+          white-rum,
+          spiced-rum,
+          rhum-agricole,
+          blanco,
+          joven,
+          cristalino,
+          generic-vodka,
+          flavored-vodka,
+          unknown,
+          other,
+        ]
       default: unknown
       notes: >
         Follows the identical runtime validation checking pattern established
@@ -168,19 +227,41 @@ rectified_spirits:
 
 ## Branch 3: Liqueurs & Cordials
 
-*Structural scope: High-sugar modifiers. This branch solves the crossover problem by inheriting global constraints while introducing a specific sugar modifier gate.*
+_Structural scope: High-sugar modifiers. This branch solves the crossover problem by inheriting global constraints while introducing a specific sugar modifier gate._
 
 ```yaml
 liqueurs:
   attributes:
     - name: base_spirit_category
       type: enum
-      values: [whisky, cognac_armagnac, brandy, rum, tequila, mezcal, vodka, gin, neutral, unknown, other]
+      values:
+        [
+          whisky,
+          cognac_armagnac,
+          brandy,
+          rum,
+          tequila,
+          mezcal,
+          vodka,
+          gin,
+          neutral,
+          unknown,
+          other,
+        ]
       default: unknown
       notes: Cross-references the root spirit_type values to preserve base spirit provenance.
     - name: flavor_profile_category
       type: enum
-      values: [herbal-botanical, fruit, nut-spice, cream-emulsion, coffee-chocolate, unknown, other]
+      values:
+        [
+          herbal-botanical,
+          fruit,
+          nut-spice,
+          cream-emulsion,
+          coffee-chocolate,
+          unknown,
+          other,
+        ]
       default: unknown
     - name: sugar_content_g_l
       type: number
