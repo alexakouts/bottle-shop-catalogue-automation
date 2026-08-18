@@ -1,10 +1,14 @@
 import { BEVERAGE_CATEGORY } from "../schemas/beverage.js";
 import { BEER_FERMENTATION_TYPES, BEER_STYLES } from "../schemas/beer.js";
 
-import { assertEnum, requireString } from "../../shared/assert.js";
+import {
+  assertEnum,
+  requireString,
+  assertBeverage,
+} from "../../shared/assert.js";
 
 export function createBeer(input) {
-  const id = requireString(input.id, "Beer id");
+  const base = assertBeverage(input);
 
   const fermentationType = assertEnum(
     requireString(input.fermentationType, "Beer fermentation type"),
@@ -19,7 +23,7 @@ export function createBeer(input) {
   );
 
   return {
-    id,
+    id: base.id,
     category: BEVERAGE_CATEGORY.BEER,
     fermentationType,
     style,

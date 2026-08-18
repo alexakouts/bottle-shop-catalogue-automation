@@ -1,4 +1,7 @@
-export const SENTINELS = ["unknown", "other"];
+export const SENTINELS = Object.freeze({
+  UNKNOWN: "unknown",
+  OTHER: "other",
+});
 
 export const BEVERAGE_CATEGORY = Object.freeze({
   BEER: "beer",
@@ -10,7 +13,7 @@ export const BEVERAGE_CATEGORY = Object.freeze({
 
 export const BEVERAGE_CATEGORIES = [
   ...Object.values(BEVERAGE_CATEGORY),
-  ...SENTINELS,
+  ...Object.values(SENTINELS),
 ];
 
 export const ALCOHOL_STATUSES = [
@@ -18,7 +21,7 @@ export const ALCOHOL_STATUSES = [
   "low-alcohol",
   "non-alcoholic",
   "alcohol-free",
-  "unknown", // no "other" — see taxonomy-conventions.md Section 4
+  SENTINELS.UNKNOWN, // no "other" — see taxonomy-conventions.md Section 4
 ];
 
 export const CONTAINER_TYPES = [
@@ -27,5 +30,5 @@ export const CONTAINER_TYPES = [
   "cask",
   "carton",
   "pouch",
-  ...SENTINELS,
+  ...Object.values(SENTINELS),
 ];

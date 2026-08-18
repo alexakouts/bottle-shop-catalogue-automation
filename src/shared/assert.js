@@ -1,3 +1,9 @@
+import {
+  BEVERAGE_CATEGORIES,
+  ALCOHOL_STATUSES,
+  CONTAINER_TYPES,
+} from "../domain/schemas/beverage.js";
+
 export function invariant(condition, message) {
   if (!condition) {
     throw new Error(message);
@@ -26,12 +32,59 @@ export function requireNumericString(value, name) {
   return trimmed;
 }
 
+export function requireNumberInRange(value, min, max, name) {
+  invariant(
+    typeof value === "number" && !Number.isNaN(value),
+    `${name} must be a number`,
+  );
+  invariant(
+    value >= min && value <= max,
+    `${name} must be between ${min} and ${max}`,
+  );
+  return value;
+}
+
+export function requirePattern(value, pattern, name) {
+  const asString = requireString(value, name);
+  invariant(pattern.test(asString), `${name} must match the expected format`);
+  return asString;
+}
+
 export function assertEnum(value, allowed, name) {
-  if (value === undefined) return value; // optional fields pass through;
-  // pair with requireString first at the call site for required fields
+  if (value === undefined) return value;
   invariant(
     allowed.includes(value),
     `${name} must be one of [${allowed.join(", ")}], got "${value}"`,
   );
   return value;
+}
+
+const PACKAGING_SIZE_PATTERN = /^\d+(\.\d+)?(ml|L)$/;
+
+export function assertBeverage(input) {
+  return {
+    id: requireString(input.id, "Beverage id"),
+    category: assertEnum(
+      requireString(input.category, "Beverage category"),
+      BEVERAGE_CATEGORIES,
+      "Beverage category",
+    ),
+    alcoholStatus: assertEnum(
+      requireString(input.alcoholStatus, "Alcohol status"),
+      ALCOHOL_STATUSES,
+      "Alcohol status",
+    ),
+    abv: requireNumberInRange(input.abv, 0, 100, "ABV"),
+    packagingSize: requirePattern(
+      input.packagingSize,
+      PACKAGING_SIZE_PATTERN,
+      "Packaging size",
+    ),
+    brand: requireString(input.brand, "Brand"),
+    containerType: assertEnum(
+      input.containerType,
+      CONTAINER_TYPES,
+      "Container type",
+    ),
+  };
 }

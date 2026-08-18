@@ -1,4 +1,5 @@
 import { createBeer } from "./beer.js";
+import { createWine } from "./wine.js";
 
 import {
   BEVERAGE_CATEGORY,
@@ -18,11 +19,12 @@ export function createBeverage(input) {
     case BEVERAGE_CATEGORY.BEER:
       return createBeer(input);
 
+    case BEVERAGE_CATEGORY.WINE:
+      return createWine(input);
+
     // TODO: wire up as factories exist
     // case BEVERAGE_CATEGORY.CIDER:
     //   return createCider(input);
-    // case BEVERAGE_CATEGORY.WINE:
-    //   return createWine(input);
     // case BEVERAGE_CATEGORY.SPIRITS:
     //   return createSpirits(input);
     // case BEVERAGE_CATEGORY.RTD:
