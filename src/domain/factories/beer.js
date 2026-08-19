@@ -23,7 +23,8 @@ export function createBeer(input) {
   );
 
   return {
-    id: base.id,
+    ...(base.gtin !== undefined && { gtin: base.gtin }),
+    ...(base.sku !== undefined && { sku: base.sku }),
     category: BEVERAGE_CATEGORY.BEER,
     fermentationType,
     style,

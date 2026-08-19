@@ -59,11 +59,25 @@ export function assertEnum(value, allowed, name) {
   return value;
 }
 
+export function assertIdentity(input) {
+  const hasGtin = input.gtin !== undefined;
+  const hasSku = input.sku !== undefined;
+
+  invariant(hasGtin || hasSku, "Identity requires at least a GTIN or a SKU");
+
+  return {
+    ...(hasGtin && { gtin: requireNumericString(input.gtin, "GTIN") }),
+    ...(hasSku && { sku: requireString(input.sku, "SKU") }),
+  };
+}
+
 const PACKAGING_SIZE_PATTERN = /^\d+(\.\d+)?(ml|L)$/;
 
 export function assertBeverage(input) {
+  const identity = assertIdentity(input);
+
   return {
-    id: requireString(input.id, "Beverage id"),
+    ...identity,
     category: assertEnum(
       requireString(input.category, "Beverage category"),
       BEVERAGE_CATEGORIES,

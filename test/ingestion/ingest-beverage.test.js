@@ -5,8 +5,8 @@ import { ingestBeverage } from "../../src/ingestion/ingest-beverage.js";
 
 test("returns a successful result for a valid beverage", () => {
   const result = ingestBeverage({
-    id: "beer-001",
     category: "beer",
+    gtin: "5000112548167",
     fermentationType: "ale",
     style: "stout",
     alcoholStatus: "alcoholic",
@@ -16,14 +16,14 @@ test("returns a successful result for a valid beverage", () => {
   });
 
   assert.equal(result.ok, true);
-  assert.equal(result.record.id, "beer-001");
+  assert.equal(result.record.gtin, "5000112548167");
   assert.equal(result.record.category, "beer");
 });
 
 test("returns errors for an invalid beverage without throwing", () => {
   const result = ingestBeverage({
-    id: "beer-001",
     category: "beer",
+    gtin: "5000112548167",
     fermentationType: "invalid",
     style: "stout",
     alcoholStatus: "alcoholic",

@@ -2,13 +2,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { createWine } from "../../../src/domain/factories/wine.js";
 
-// Domain-level factory: THROWS on invalid input, returns a plain record
-// (no {ok, record} wrapper) on success — this is a pure domain function,
-// not the ingestion boundary.
-
 const validBase = {
-  id: "wine-001",
   category: "wine",
+  sku: "WINE-RED-01",
   alcoholStatus: "alcoholic",
   abv: 13.5,
   packagingSize: "750ml",
@@ -22,18 +18,19 @@ test("returns a plain canonical record on valid input", () => {
   });
 
   assert.equal(wine.category, "wine");
+  assert.equal(wine.sku, "WINE-RED-01");
   assert.equal(wine.type, "red");
 });
 
-test("throws when id is missing", () => {
+test("throws when neither gtin nor sku is provided", () => {
   assert.throws(
     () =>
       createWine({
         ...validBase,
-        id: undefined,
+        sku: undefined,
         type: "red",
       }),
-    /Beverage id/,
+    /GTIN or a SKU/,
   );
 });
 
@@ -42,7 +39,6 @@ test("throws when type is not a valid enum member", () => {
     () =>
       createWine({
         ...validBase,
-        id: "wine-002",
         type: "mulled",
       }),
     /Wine type/,
