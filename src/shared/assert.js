@@ -1,5 +1,4 @@
 import {
-  BEVERAGE_CATEGORIES,
   ALCOHOL_STATUSES,
   CONTAINER_TYPES,
 } from "../domain/schemas/beverage.js";
@@ -44,10 +43,22 @@ export function requireNumberInRange(value, min, max, name) {
   return value;
 }
 
-export function requirePattern(value, pattern, name) {
-  const asString = requireString(value, name);
-  invariant(pattern.test(asString), `${name} must match the expected format`);
-  return asString;
+export function requirePositiveInteger(value, name) {
+  invariant(
+    typeof value === "number" && Number.isInteger(value),
+    `${name} must be an integer`,
+  );
+  invariant(value > 0, `${name} must be greater than zero`);
+  return value;
+}
+
+export function requirePositiveNumber(value, name) {
+  invariant(
+    typeof value === "number" && Number.isFinite(value),
+    `${name} must be a finite number`,
+  );
+  invariant(value > 0, `${name} must be greater than zero`);
+  return value;
 }
 
 export function assertEnum(value, allowed, name) {
@@ -71,34 +82,73 @@ export function assertIdentity(input) {
   };
 }
 
-const PACKAGING_SIZE_PATTERN = /^\d+(\.\d+)?(ml|L)$/;
+export function requireNumberFromNumericString(value, name) {
+  const numericStr = requireNumericString(value, name);
+  return parseInt(numericStr, 10);
+}
+
+// Support decimals if you change your regex later, or use floats for ABV percent
+export function requireFloatFromNumericString(value, name) {
+  // If your ABV input contains decimals (e.g. "4.5"), update requireNumericString's
+  // regex pattern to: /^\d+(\.\d+)?$/ to support optional decimal points.
+  const trimmed = requireString(value, name);
+  invariant(
+    /^\d+(\.\d+)?$/.test(trimmed),
+    `${name} must be a valid numeric format`,
+  );
+  return parseFloat(trimmed);
+}
 
 export function assertBeverage(input) {
+  invariant(
+    input && typeof input === "object",
+    "Beverage input must be an object",
+  );
+
+  // 1. Leverage your existing identity rule block (Extracts SKU/GTIN)
   const identity = assertIdentity(input);
+
+  // 2. Validate core beverage enums using your assertEnum utility
+  const category = assertEnum(
+    requireString(input.category, "Beverage category"),
+    BEVERAGE_CATEGORIES,
+    "Beverage category",
+  );
+
+  const alcoholStatus = assertEnum(
+    requireString(input.alcoholStatus, "Alcohol status"),
+    ALCOHOL_STATUSES,
+    "Alcohol status",
+  );
+
+  const containerType = assertEnum(
+    requireString(input.containerType, "Container type"),
+    CONTAINER_TYPES,
+    "Container type",
+  );
+
+  // 3. Extract your physical footprint variables as clean numbers
+  // This removes the old regex string requirement completely
+  const liquidVolumeMl = requireNumberFromNumericString(
+    input.liquidVolumeMl,
+    "Liquid volume (mL)",
+  );
+  const grossWeightGrams = requireNumberFromNumericString(
+    input.grossWeightGrams,
+    "Gross weight (g)",
+  );
+
+  // 4. Extract ABV and verify legal boundaries using requireNumberInRange
+  const rawAbv = requireFloatFromNumericString(input.abv, "ABV");
+  const abv = requireNumberInRange(rawAbv, 0, 100, "ABV");
 
   return {
     ...identity,
-    category: assertEnum(
-      requireString(input.category, "Beverage category"),
-      BEVERAGE_CATEGORIES,
-      "Beverage category",
-    ),
-    alcoholStatus: assertEnum(
-      requireString(input.alcoholStatus, "Alcohol status"),
-      ALCOHOL_STATUSES,
-      "Alcohol status",
-    ),
-    abv: requireNumberInRange(input.abv, 0, 100, "ABV"),
-    packagingSize: requirePattern(
-      input.packagingSize,
-      PACKAGING_SIZE_PATTERN,
-      "Packaging size",
-    ),
-    brand: requireString(input.brand, "Brand"),
-    containerType: assertEnum(
-      input.containerType,
-      CONTAINER_TYPES,
-      "Container type",
-    ),
+    category,
+    alcoholStatus,
+    containerType,
+    liquidVolumeMl,
+    grossWeightGrams,
+    abv,
   };
 }

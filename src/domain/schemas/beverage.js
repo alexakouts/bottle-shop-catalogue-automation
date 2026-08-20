@@ -21,14 +21,5 @@ export const ALCOHOL_STATUSES = [
   "low-alcohol",
   "non-alcoholic",
   "alcohol-free",
-  SENTINELS.UNKNOWN, // no "other" — see taxonomy-conventions.md Section 4
-];
-
-export const CONTAINER_TYPES = [
-  "bottle",
-  "can",
-  "cask",
-  "carton",
-  "pouch",
-  ...Object.values(SENTINELS),
+  SENTINELS.UNKNOWN,
 ];

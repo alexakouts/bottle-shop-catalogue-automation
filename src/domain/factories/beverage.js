@@ -1,42 +1,43 @@
-import { createBeer } from "./beer.js";
-import { createWine } from "./wine.js";
-
+import { randomUUID } from "node:crypto";
+import { requireString, assertEnum } from "../../shared/assert.js";
 import {
+  ALCOHOL_STATUSES,
   BEVERAGE_CATEGORY,
   BEVERAGE_CATEGORIES,
-  SENTINELS,
 } from "../schemas/beverage.js";
-import { assertEnum, requireString } from "../../shared/assert.js";
+import { createBeer } from "./beer.js";
 
 export function createBeverage(input) {
+  const id = randomUUID();
+
+  const brand = requireString(input.brand, "Beverage brand");
+
   const category = assertEnum(
     requireString(input.category, "Beverage category"),
     BEVERAGE_CATEGORIES,
     "Beverage category",
   );
 
+  const alcoholStatus = assertEnum(
+    requireString(input.alcoholStatus, "Beverage alcohol status"),
+    ALCOHOL_STATUSES,
+    "Beverage alcohol status",
+  );
+
+  let classification;
   switch (category) {
     case BEVERAGE_CATEGORY.BEER:
-      return createBeer(input);
+      classification = createBeer({
+        fermentationType: input.fermentationType,
+        style: input.style,
+      });
+      break;
 
-    case BEVERAGE_CATEGORY.WINE:
-      return createWine(input);
-
-    // TODO: wire up as factories exist
-    // case BEVERAGE_CATEGORY.CIDER:
-    //   return createCider(input);
-    // case BEVERAGE_CATEGORY.SPIRITS:
-    //   return createSpirits(input);
-    // case BEVERAGE_CATEGORY.RTD:
-    //   return createRtd(input);
-
-    case SENTINELS.UNKNOWN:
-    case SENTINELS.OTHER:
-      throw new Error(
-        `Cannot construct category-specific beverage for category: ${category}`,
-      );
+    // wine next, same shape
 
     default:
       throw new Error(`Unhandled beverage category: ${category}`);
   }
+
+  return { id, brand, category, alcoholStatus, ...classification };
 }
