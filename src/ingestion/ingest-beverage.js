@@ -1,15 +1,15 @@
-import { createBeverage } from "../domain/factories/beverage.js";
+import { createBeverageVariant } from "../domain/factories/beverage-variant.js";
 
 /**
- * Ingestion-layer boundary: wraps the throwing domain router in the
- * non-throwing {ok, record|errors} contract.
+ * Ingestion-layer boundary: wraps the throwing domain composition factory
+ * in the non-throwing {ok, record|errors} contract.
  *
  * @param {object} raw
  * @returns {{ok: true, record: object} | {ok: false, errors: string[]}}
  */
 export function ingestBeverage(raw) {
   try {
-    const record = createBeverage(raw);
+    const record = createBeverageVariant(raw);
 
     return {
       ok: true,
