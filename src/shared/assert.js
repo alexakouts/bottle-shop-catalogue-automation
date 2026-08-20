@@ -1,7 +1,4 @@
-import {
-  ALCOHOL_STATUSES,
-  CONTAINER_TYPES,
-} from "../domain/schemas/beverage.js";
+import { ALCOHOL_STATUSES } from "../domain/schemas/beverage.js";
 
 export function invariant(condition, message) {
   if (!condition) {
@@ -82,38 +79,8 @@ export function assertIdentity(input) {
   };
 }
 
-export function requireNumberFromNumericString(value, name) {
-  const numericStr = requireNumericString(value, name);
-  return parseInt(numericStr, 10);
-}
-
-// Support decimals if you change your regex later, or use floats for ABV percent
-export function requireFloatFromNumericString(value, name) {
-  // If your ABV input contains decimals (e.g. "4.5"), update requireNumericString's
-  // regex pattern to: /^\d+(\.\d+)?$/ to support optional decimal points.
-  const trimmed = requireString(value, name);
-  invariant(
-    /^\d+(\.\d+)?$/.test(trimmed),
-    `${name} must be a valid numeric format`,
-  );
-  return parseFloat(trimmed);
-}
-
 export function assertBeverage(input) {
-  invariant(
-    input && typeof input === "object",
-    "Beverage input must be an object",
-  );
-
-  // 1. Leverage your existing identity rule block (Extracts SKU/GTIN)
-  const identity = assertIdentity(input);
-
-  // 2. Validate core beverage enums using your assertEnum utility
-  const category = assertEnum(
-    requireString(input.category, "Beverage category"),
-    BEVERAGE_CATEGORIES,
-    "Beverage category",
-  );
+  const brand = requireString(input.brand, "Brand");
 
   const alcoholStatus = assertEnum(
     requireString(input.alcoholStatus, "Alcohol status"),
@@ -121,34 +88,8 @@ export function assertBeverage(input) {
     "Alcohol status",
   );
 
-  const containerType = assertEnum(
-    requireString(input.containerType, "Container type"),
-    CONTAINER_TYPES,
-    "Container type",
-  );
-
-  // 3. Extract your physical footprint variables as clean numbers
-  // This removes the old regex string requirement completely
-  const liquidVolumeMl = requireNumberFromNumericString(
-    input.liquidVolumeMl,
-    "Liquid volume (mL)",
-  );
-  const grossWeightGrams = requireNumberFromNumericString(
-    input.grossWeightGrams,
-    "Gross weight (g)",
-  );
-
-  // 4. Extract ABV and verify legal boundaries using requireNumberInRange
-  const rawAbv = requireFloatFromNumericString(input.abv, "ABV");
-  const abv = requireNumberInRange(rawAbv, 0, 100, "ABV");
-
   return {
-    ...identity,
-    category,
+    brand,
     alcoholStatus,
-    containerType,
-    liquidVolumeMl,
-    grossWeightGrams,
-    abv,
   };
 }

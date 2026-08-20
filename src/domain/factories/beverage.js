@@ -1,27 +1,21 @@
 import { randomUUID } from "node:crypto";
-import { requireString, assertEnum } from "../../shared/assert.js";
 import {
-  ALCOHOL_STATUSES,
-  BEVERAGE_CATEGORY,
-  BEVERAGE_CATEGORIES,
-} from "../schemas/beverage.js";
+  requireString,
+  assertEnum,
+  assertBeverage,
+} from "../../shared/assert.js";
+import { BEVERAGE_CATEGORY, BEVERAGE_CATEGORIES } from "../schemas/beverage.js";
 import { createBeer } from "./beer.js";
 
 export function createBeverage(input) {
   const id = randomUUID();
 
-  const brand = requireString(input.brand, "Beverage brand");
+  const { brand, alcoholStatus } = assertBeverage(input);
 
   const category = assertEnum(
     requireString(input.category, "Beverage category"),
     BEVERAGE_CATEGORIES,
     "Beverage category",
-  );
-
-  const alcoholStatus = assertEnum(
-    requireString(input.alcoholStatus, "Beverage alcohol status"),
-    ALCOHOL_STATUSES,
-    "Beverage alcohol status",
   );
 
   let classification;
