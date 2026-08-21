@@ -6,6 +6,10 @@ import {
 } from "../../shared/assert.js";
 import { BEVERAGE_CATEGORY, BEVERAGE_CATEGORIES } from "../schemas/beverage.js";
 import { createBeer } from "./beer.js";
+import { createWine } from "./wine.js";
+import { createSpirits } from "./spirits.js";
+import { createRtd } from "./rtd.js";
+import { createCider } from "./cider.js";
 
 export function createBeverage(input) {
   const id = randomUUID();
@@ -27,7 +31,29 @@ export function createBeverage(input) {
       });
       break;
 
-    // wine next, same shape
+    case BEVERAGE_CATEGORY.WINE:
+      classification = createWine({
+        type: input.type,
+      });
+      break;
+
+    case BEVERAGE_CATEGORY.SPIRITS:
+      classification = createSpirits({
+        spiritType: input.spiritType,
+      });
+      break;
+
+    case BEVERAGE_CATEGORY.RTD:
+      classification = createRtd({
+        type: input.type,
+      });
+      break;
+
+    case BEVERAGE_CATEGORY.CIDER:
+      classification = createCider({
+        type: input.type,
+      });
+      break;
 
     default:
       throw new Error(`Unhandled beverage category: ${category}`);

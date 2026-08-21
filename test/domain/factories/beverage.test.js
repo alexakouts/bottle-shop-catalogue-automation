@@ -63,11 +63,64 @@ test("throws when category is not a valid enum member", () => {
   );
 });
 
-test("throws when category is schema-valid but has no wired factory", () => {
+test("throws when category is a sentinel value (no factory can exist for it)", () => {
   assert.throws(
-    () => createBeverage({ ...validBeerInput, category: "wine" }),
-    /Unhandled beverage category: wine/,
+    () => createBeverage({ ...validBeerInput, category: "unknown" }),
+    /Unhandled beverage category: unknown/,
   );
 });
 
-test;
+test("throws when category-specific fields are invalid, via the dispatched factory", () => {
+  assert.throws(
+    () => createBeverage({ ...validBeerInput, fermentationType: "bock" }),
+    /Beer fermentation type/,
+  );
+});
+
+test("routes a wine input to createWine", () => {
+  const wine = createBeverage({
+    brand: "Test Vineyard Co",
+    category: "wine",
+    alcoholStatus: "alcoholic",
+    type: "red",
+  });
+
+  assert.equal(wine.category, "wine");
+  assert.equal(wine.type, "red");
+});
+
+test("routes a spirits input to createSpirits", () => {
+  const spirits = createBeverage({
+    brand: "Glenfiddich",
+    category: "spirits",
+    alcoholStatus: "alcoholic",
+    spiritType: "whisky",
+  });
+
+  assert.equal(spirits.category, "spirits");
+  assert.equal(spirits.spiritType, "whisky");
+});
+
+test("routes an rtd input to createRtd", () => {
+  const rtd = createBeverage({
+    brand: "White Claw",
+    category: "rtd",
+    alcoholStatus: "alcoholic",
+    type: "seltzer",
+  });
+
+  assert.equal(rtd.category, "rtd");
+  assert.equal(rtd.type, "seltzer");
+});
+
+test("routes a cider input to createCider", () => {
+  const cider = createBeverage({
+    brand: "Angry Orchard",
+    category: "cider",
+    alcoholStatus: "alcoholic",
+    type: "apple",
+  });
+
+  assert.equal(cider.category, "cider");
+  assert.equal(cider.type, "apple");
+});
