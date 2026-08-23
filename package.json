@@ -7,6 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --env-file=.env src/server.js",
     "test": "node --test",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -24,6 +26,10 @@
   },
   "homepage": "https://github.com/alexakouts/bottle-shop-catalogue-automation#readme",
   "devDependencies": {
-    "prettier": "^3.9.6"
+    "prettier": "^3.9.6",
+    "supertest": "^7.2.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
