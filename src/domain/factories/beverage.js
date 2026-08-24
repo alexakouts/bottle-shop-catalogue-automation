@@ -39,7 +39,7 @@ export function createBeverage(input) {
 
     case BEVERAGE_CATEGORY.SPIRITS:
       classification = createSpirits({
-        spiritType: input.spiritType,
+        type: input.type,
       });
       break;
 

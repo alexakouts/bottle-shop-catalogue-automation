@@ -94,11 +94,11 @@ test("routes a spirits input to createSpirits", () => {
     brand: "Glenfiddich",
     category: "spirits",
     alcoholStatus: "alcoholic",
-    spiritType: "whisky",
+    type: "whisky",
   });
 
   assert.equal(spirits.category, "spirits");
-  assert.equal(spirits.spiritType, "whisky");
+  assert.equal(spirits.type, "whisky");
 });
 
 test("routes an rtd input to createRtd", () => {
