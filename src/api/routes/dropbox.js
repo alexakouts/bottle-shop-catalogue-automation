@@ -1,17 +1,10 @@
 import { Router } from "express";
 
-export function createDropboxRouter() {
+export function createDropboxRouter({ dropboxController }) {
   const router = Router();
 
-  // Dropbox webhook verification.
-  router.get("/", (req, res) => {
-    res.sendStatus(501);
-  });
-
-  // Dropbox change notification.
-  router.post("/", (req, res) => {
-    res.sendStatus(501);
-  });
+  router.get("/", dropboxController.verifyWebhook);
+  router.post("/", dropboxController.receiveWebhook);
 
   return router;
 }
