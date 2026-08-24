@@ -1,4 +1,9 @@
-export function createDropboxController() {
+import { assertPresent, assertFunction } from "../../shared/invariant.js";
+
+export function createDropboxController({ dropboxService }) {
+  assertPresent(dropboxService, "dropboxService");
+  assertFunction(dropboxService.handleChange, "dropboxService.handleChange");
+
   function verifyWebhook(req, res) {
     const challenge = req.query.challenge;
 
@@ -14,7 +19,11 @@ export function createDropboxController() {
   }
 
   function receiveWebhook(req, res) {
-    return res.sendStatus(501);
+    res.sendStatus(200);
+
+    dropboxService.handleChange(req.body).catch((err) => {
+      console.error("Error handling Dropbox webhook notification:", err);
+    });
   }
 
   return {

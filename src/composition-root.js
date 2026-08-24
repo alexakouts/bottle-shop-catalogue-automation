@@ -1,13 +1,15 @@
 import { createApp } from "./app.js";
 import { createHealthRouter } from "./api/routes/health.js";
-import { createDropboxRouter } from "./api/routes/dropbox.js";
-import { createDropboxController } from "./api/controllers/dropbox.js";
+import { buildDropbox } from "./composition/build-dropbox.js";
+import { processCsv } from "./ingestion/process-csv.js";
 
-export function createCompositionRoot() {
-  const dropboxController = createDropboxController();
-
+export function createCompositionRoot({ dropboxAccessToken }) {
   const healthRouter = createHealthRouter();
-  const dropBoxRouter = createDropboxRouter({ dropboxController });
+
+  const dropboxRouter = buildDropbox({
+    accessToken: dropboxAccessToken,
+    processCsv,
+  });
 
   const routes = [
     {
@@ -16,7 +18,7 @@ export function createCompositionRoot() {
     },
     {
       path: "/webhooks/dropbox",
-      router: dropBoxRouter,
+      router: dropboxRouter,
     },
   ];
 
