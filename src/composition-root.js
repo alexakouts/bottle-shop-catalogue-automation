@@ -3,11 +3,10 @@ import { createHealthRouter } from "./api/routes/health.js";
 import { buildDropbox } from "./composition/build-dropbox.js";
 import { processCsv } from "./ingestion/process-csv.js";
 
-export function createCompositionRoot({ dropboxAccessToken }) {
+export function createCompositionRoot({ dropbox }) {
   const healthRouter = createHealthRouter();
-
   const dropboxRouter = buildDropbox({
-    accessToken: dropboxAccessToken,
+    credentials: dropbox,
     processCsv,
   });
 

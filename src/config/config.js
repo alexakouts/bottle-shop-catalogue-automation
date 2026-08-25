@@ -4,15 +4,27 @@ if (!Number.isInteger(port) || port <= 0) {
   throw new Error("PORT must be a positive integer");
 }
 
-const dropboxAccessToken = process.env.DROPBOX_ACCESS_TOKEN;
+const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
+const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
+const dropboxRefreshToken = process.env.DROPBOX_REFRESH_TOKEN;
 
-if (!dropboxAccessToken) {
-  throw new Error("DROPBOX_ACCESS_TOKEN is required");
+if (!dropboxClientId) {
+  throw new Error("DROPBOX_CLIENT_ID is required");
+}
+
+if (!dropboxClientSecret) {
+  throw new Error("DROPBOX_CLIENT_SECRET is required");
+}
+
+if (!dropboxRefreshToken) {
+  throw new Error("DROPBOX_REFRESH_TOKEN is required");
 }
 
 export const config = Object.freeze({
   port,
   dropbox: Object.freeze({
-    accessToken: dropboxAccessToken,
+    clientId: dropboxClientId,
+    clientSecret: dropboxClientSecret,
+    refreshToken: dropboxRefreshToken,
   }),
 });

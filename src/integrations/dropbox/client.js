@@ -1,18 +1,42 @@
 // src/integrations/dropbox/client.js
 
 import { Dropbox } from "dropbox";
+import { assertPresent } from "../../shared/invariant.js";
 
-export function createDropboxClient({ accessToken }) {
+export function createDropboxClient({ clientId, clientSecret, refreshToken }) {
+  assertPresent(clientId, "clientId");
+  assertPresent(clientSecret, "clientSecret");
+  assertPresent(refreshToken, "refreshToken");
+
   const client = new Dropbox({
-    accessToken,
+    clientId,
+    clientSecret,
+    refreshToken,
   });
 
   async function listFolder(path) {
-    throw new Error("Not implemented");
+    const { result } = await client.filesListFolder({
+      path,
+      recursive: true,
+    });
+
+    return {
+      entries: result.entries,
+      cursor: result.cursor,
+      hasMore: result.has_more,
+    };
   }
 
   async function listFolderContinue(cursor) {
-    throw new Error("Not implemented");
+    const { result } = await client.filesListFolderContinue({
+      cursor,
+    });
+
+    return {
+      entries: result.entries,
+      cursor: result.cursor,
+      hasMore: result.has_more,
+    };
   }
 
   async function downloadFile(path) {

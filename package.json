@@ -10,6 +10,7 @@
     "start": "node src/server.js",
     "dev": "node --env-file=.env src/server.js",
     "test": "node --test",
+    "test:dropbox": "node --env-file=.env --test integration-tests/dropbox/client.integration.js",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
