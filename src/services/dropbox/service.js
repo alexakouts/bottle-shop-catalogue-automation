@@ -20,6 +20,10 @@ export function createDropboxService({
       }
 
       const csvText = await dropboxClient.downloadFile(entry.path_lower);
+
+      console.log(
+        `Dropbox file received: ${entry.path_lower} (${Buffer.byteLength(csvText, "utf8")} bytes)`,
+      );
       const result = processCsv(csvText);
 
       results.push({

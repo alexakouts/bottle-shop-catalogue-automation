@@ -1,7 +1,6 @@
-// src/integrations/dropbox/client.js
-
 import { Dropbox } from "dropbox";
 import { assertPresent } from "../../shared/invariant.js";
+import { createAppError } from "../../errors/app-error.js";
 
 export function createDropboxClient({ clientId, clientSecret, refreshToken }) {
   assertPresent(clientId, "clientId");
@@ -40,7 +39,16 @@ export function createDropboxClient({ clientId, clientSecret, refreshToken }) {
   }
 
   async function downloadFile(path) {
-    throw new Error("Not implemented");
+    const { result } = await client.filesDownload({ path });
+    if (result.fileBinary) {
+      return result.fileBinary.toString("utf8");
+    }
+    throw createAppError(
+      "DROPBOX_DOWNLOAD_EMPTY",
+      `Dropbox download returned no file content for "${path}"`,
+      502,
+      { path },
+    );
   }
 
   return {
