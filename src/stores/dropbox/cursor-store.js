@@ -1,12 +1,20 @@
-export function createDropboxCursorStore() {
-  let cursor;
+import { assertPresent } from "../../shared/invariant.js";
+
+const DEFAULT_CURSOR_KEY = "dropbox:cursor";
+
+export function createDropboxCursorStore({
+  redisClient,
+  key = DEFAULT_CURSOR_KEY,
+}) {
+  assertPresent(redisClient, "redisClient");
+  assertPresent(key, "key");
 
   async function get() {
-    return cursor;
+    return (await redisClient.get(key)) ?? undefined;
   }
 
   async function set(value) {
-    cursor = value;
+    await redisClient.set(key, value);
   }
 
   return {

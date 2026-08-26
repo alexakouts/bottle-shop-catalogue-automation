@@ -1,12 +1,26 @@
+// src/composition-root.js
+
 import { createApp } from "./app.js";
 import { createHealthRouter } from "./api/routes/health.js";
 import { buildDropbox } from "./composition/build-dropbox.js";
+import { createRedisClient } from "./integrations/redis/client.js";
 import { processCsv } from "./ingestion/process-csv.js";
 
-export function createCompositionRoot({ dropbox }) {
+import { assertPresent } from "./shared/invariant.js";
+
+export function createCompositionRoot({ dropbox, redis }) {
+  assertPresent(dropbox, "dropbox");
+  assertPresent(redis, "redis");
+
+  const redisClient = createRedisClient({
+    url: redis.url,
+  });
+
   const healthRouter = createHealthRouter();
+
   const dropboxRouter = buildDropbox({
     credentials: dropbox,
+    redisClient,
     processCsv,
   });
 
@@ -23,5 +37,8 @@ export function createCompositionRoot({ dropbox }) {
 
   const app = createApp({ routes });
 
-  return { app };
+  return {
+    app,
+    redisClient,
+  };
 }

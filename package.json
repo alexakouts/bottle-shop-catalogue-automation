@@ -11,6 +11,7 @@
     "dev": "node --env-file=.env src/server.js",
     "test": "node --test",
     "test:dropbox": "node --env-file=.env --test integration-tests/dropbox/client.integration.js",
+    "test:redis": "node --env-file=.env --test integration-tests/redis/client.integration.js",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -33,6 +34,7 @@
   "dependencies": {
     "csv-parse": "^7.0.2",
     "dropbox": "^10.46.0",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "redis": "^6.2.1"
   }
 }

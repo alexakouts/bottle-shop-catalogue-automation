@@ -148,3 +148,113 @@ test("returns an empty array when there are no entries", async () => {
 
   assert.deepEqual(results, []);
 });
+
+test("attaches the resolved retailerId to a successfully processed file", async () => {
+  const dropboxClient = {
+    listFolder: async () => ({
+      entries: [{ path_lower: "/ews/catalog.csv" }],
+      cursor: "cursor-1",
+      hasMore: false,
+    }),
+    downloadFile: async () => "brand,category\nTest,beer",
+  };
+
+  const service = createDropboxService({
+    dropboxClient,
+    cursorStore: fakeCursorStore(undefined),
+    processCsv: () => ({ records: [], rejected: [] }),
+  });
+
+  const results = await service.handleChange({});
+
+  assert.equal(results[0].ok, true);
+  assert.equal(results[0].retailerId, "6049cd60-94c4-41f3-b046-202464211697");
+});
+
+test("skips a file from an unregistered retailer folder without downloading it", async () => {
+  let downloadCalled = false;
+  const dropboxClient = {
+    listFolder: async () => ({
+      entries: [{ path_lower: "/unknown-retailer/catalog.csv" }],
+      cursor: "cursor-1",
+      hasMore: false,
+    }),
+    downloadFile: async () => {
+      downloadCalled = true;
+      return "";
+    },
+  };
+
+  const service = createDropboxService({
+    dropboxClient,
+    cursorStore: fakeCursorStore(undefined),
+    processCsv: () => ({ records: [], rejected: [] }),
+  });
+
+  const results = await service.handleChange({});
+
+  assert.equal(downloadCalled, false);
+  assert.equal(results.length, 1);
+  assert.equal(results[0].file, "/unknown-retailer/catalog.csv");
+  assert.equal(results[0].ok, false);
+  assert.equal(results[0].error.code, "UNKNOWN_RETAILER_FOLDER");
+  assert.match(results[0].error.message, /No retailer is registered/);
+});
+
+test("processes a known-retailer file even when another file in the same batch is unknown", async () => {
+  const dropboxClient = {
+    listFolder: async () => ({
+      entries: [
+        { path_lower: "/unknown-retailer/catalog.csv" },
+        { path_lower: "/ews/catalog.csv" },
+      ],
+      cursor: "cursor-1",
+      hasMore: false,
+    }),
+    downloadFile: async () => "brand,category\nTest,beer",
+  };
+
+  const service = createDropboxService({
+    dropboxClient,
+    cursorStore: fakeCursorStore(undefined),
+    processCsv: () => ({ records: [], rejected: [] }),
+  });
+
+  const results = await service.handleChange({});
+
+  assert.equal(results.length, 2);
+  assert.equal(results[0].ok, false);
+  assert.equal(results[1].ok, true);
+  assert.equal(results[1].retailerId, "6049cd60-94c4-41f3-b046-202464211697");
+});
+
+test("processes all pages and stores the final cursor", async () => {
+  const cursorStore = fakeCursorStore(undefined);
+  let continueCalls = 0;
+  const dropboxClient = {
+    listFolder: async () => ({
+      entries: [{ path_lower: "/ews/first.csv" }],
+      cursor: "cursor-1",
+      hasMore: true,
+    }),
+    listFolderContinue: async (cursor) => {
+      continueCalls += 1;
+      assert.equal(cursor, "cursor-1");
+      return {
+        entries: [{ path_lower: "/ews/second.csv" }],
+        cursor: "cursor-2",
+        hasMore: false,
+      };
+    },
+    downloadFile: async () => "csv-content",
+  };
+  const service = createDropboxService({
+    dropboxClient,
+    cursorStore,
+    processCsv: () => ({ records: [], rejected: [] }),
+  });
+  const results = await service.handleChange({});
+  assert.equal(results.length, 2);
+  assert.equal(continueCalls, 1);
+  assert.equal(await cursorStore.get(), "cursor-2");
+});

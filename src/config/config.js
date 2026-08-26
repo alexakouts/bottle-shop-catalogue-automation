@@ -1,5 +1,11 @@
 const port = Number(process.env.PORT);
 
+const redisUrl = process.env.REDIS_URL;
+
+if (!redisUrl) {
+  throw new Error("REDIS_URL is required");
+}
+
 if (!Number.isInteger(port) || port <= 0) {
   throw new Error("PORT must be a positive integer");
 }

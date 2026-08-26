@@ -1,35 +1,62 @@
 // src/services/dropbox/service.js
 
+import { resolveRetailerId } from "../../registry/retailer.js";
+
 export function createDropboxService({
   dropboxClient,
   cursorStore,
   processCsv,
 }) {
-  async function handleChange(notification) {
+  async function handleChange() {
     const cursor = await cursorStore.get();
 
-    const changePage = cursor
+    let changePage = cursor
       ? await dropboxClient.listFolderContinue(cursor)
       : await dropboxClient.listFolder("");
 
     const results = [];
 
-    for (const entry of changePage.entries) {
-      if (!entry.path_lower?.endsWith(".csv")) {
-        continue;
+    while (true) {
+      for (const entry of changePage.entries) {
+        if (!entry.path_lower?.endsWith(".csv")) {
+          continue;
+        }
+
+        let retailerId;
+        try {
+          retailerId = resolveRetailerId(entry.path_lower);
+        } catch (err) {
+          results.push({
+            file: entry.path_lower,
+            ok: false,
+            error: {
+              code: err.code,
+              message: err.message,
+            },
+          });
+          continue;
+        }
+
+        const csvText = await dropboxClient.downloadFile(entry.path_lower);
+
+        console.log(
+          `Dropbox file received: ${entry.path_lower} (${Buffer.byteLength(csvText, "utf8")} bytes)`,
+        );
+        const result = processCsv(csvText);
+
+        results.push({
+          file: entry.path_lower,
+          retailerId,
+          ok: true,
+          result,
+        });
       }
 
-      const csvText = await dropboxClient.downloadFile(entry.path_lower);
+      if (!changePage.hasMore) {
+        break;
+      }
 
-      console.log(
-        `Dropbox file received: ${entry.path_lower} (${Buffer.byteLength(csvText, "utf8")} bytes)`,
-      );
-      const result = processCsv(csvText);
-
-      results.push({
-        file: entry.path_lower,
-        result,
-      });
+      changePage = await dropboxClient.listFolderContinue(changePage.cursor);
     }
 
     await cursorStore.set(changePage.cursor);

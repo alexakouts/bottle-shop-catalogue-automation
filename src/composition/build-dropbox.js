@@ -5,11 +5,9 @@ import { createDropboxClient } from "../integrations/dropbox/client.js";
 import { createDropboxCursorStore } from "../stores/dropbox/cursor-store.js";
 import { assertPresent, assertFunction } from "../shared/invariant.js";
 
-export function buildDropbox({ credentials, processCsv }) {
+export function buildDropbox({ credentials, redisClient, processCsv }) {
   assertPresent(credentials, "credentials");
-  assertPresent(credentials.clientId, "credentials.clientId");
-  assertPresent(credentials.clientSecret, "credentials.clientSecret");
-  assertPresent(credentials.refreshToken, "credentials.refreshToken");
+  assertPresent(redisClient, "redisClient");
   assertFunction(processCsv, "processCsv");
 
   const dropboxClient = createDropboxClient({
@@ -18,7 +16,10 @@ export function buildDropbox({ credentials, processCsv }) {
     refreshToken: credentials.refreshToken,
   });
 
-  const cursorStore = createDropboxCursorStore();
+  const cursorStore = createDropboxCursorStore({
+    redisClient,
+    key: "dropbox:cursor:catalogue-ingestion",
+  });
 
   const dropboxService = createDropboxService({
     dropboxClient,
