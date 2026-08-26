@@ -1,11 +1,5 @@
 const port = Number(process.env.PORT);
 
-const redisUrl = process.env.REDIS_URL;
-
-if (!redisUrl) {
-  throw new Error("REDIS_URL is required");
-}
-
 if (!Number.isInteger(port) || port <= 0) {
   throw new Error("PORT must be a positive integer");
 }
@@ -26,11 +20,20 @@ if (!dropboxRefreshToken) {
   throw new Error("DROPBOX_REFRESH_TOKEN is required");
 }
 
+const redisUrl = process.env.REDIS_URL;
+
+if (!redisUrl) {
+  throw new Error("REDIS_URL is required");
+}
+
 export const config = Object.freeze({
   port,
   dropbox: Object.freeze({
     clientId: dropboxClientId,
     clientSecret: dropboxClientSecret,
     refreshToken: dropboxRefreshToken,
+  }),
+  redis: Object.freeze({
+    url: redisUrl,
   }),
 });
